@@ -29,7 +29,6 @@
 <script>
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-
 export default {
     name: 'Register',
     data: () => {
@@ -54,6 +53,15 @@ export default {
                 if (error) {
                     throw error
                 }else{
+                    const updates = {
+                        id: user.id,
+                        username: this.name,
+                        updated_at: new Date(),
+                    }
+                    await this.$store.state.supabase.from("profiles").upsert(updates, {
+                        returning: "minimal",
+                    })
+                    user.username = this.name
                     this.$store.commit('SetState',{key:'user',value:user})
                     this.$router.push({path:'/'});
                 }
